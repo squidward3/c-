@@ -37,27 +37,31 @@ void inittotal(struct addressbook* p)
 	}
 	p->total = ptr1;
 	FILE* ptr = fopen("date.dat", "r");
-	int ret = 0;
-	while (1)
+	if (ptr != NULL)
 	{
-		if (p->sz == p->capacity)
+		int ret = 0;
+		while (1)
 		{
-			p->capacity = p->capacity + 2;
-			struct peoinfo* ptr = realloc(p->total, p->capacity * sizeof(struct peoinfo));
-			if (ptr == NULL)
+			if (p->sz == p->capacity)
 			{
-				printf("初始化失败:没有多余的内存.\n");
-				return;
+				p->capacity = p->capacity + 2;
+				struct peoinfo* ptr = realloc(p->total, p->capacity * sizeof(struct peoinfo));
+				if (ptr == NULL)
+				{
+					printf("初始化失败:没有多余的内存.\n");
+					return;
+				}
+				p->total = ptr;
 			}
-			p->total = ptr;
+			ret = fread(p->total + p->sz, sizeof(struct peoinfo), 1, ptr);
+			if (ret <= 0)
+			{
+				break;
+			}
+			p->sz++;
 		}
-		ret = fread(p->total + p->sz, sizeof(struct peoinfo), 1, ptr);
-		if (ret <= 0)
-		{
-			break;
-		}
-		p->sz++;
 	}
+	
 	//memset(p->total, 0, sizeof(p->total));
 }
 
