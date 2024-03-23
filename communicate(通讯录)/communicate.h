@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
+#include<stdlib.h>
 
-#define MAXPE 100//定义成员数量
 //函数的申明
 void inittotal(struct addressbook* p);
 void Add(struct addressbook* p);
@@ -12,6 +12,7 @@ void print12(struct addressbook* p);
 void menu(void);
 void search1(struct addressbook* p);
 void Modify(struct addressbook* p);
+void savecommunicate(struct addressbook* p);
 
 //个人信息有:
 //1.名字
@@ -30,6 +31,7 @@ struct peoinfo
 
 struct addressbook 
 {
-	struct peoinfo total[MAXPE];
+	struct peoinfo* total;
 	int sz ;
+	int capacity;
 }a;

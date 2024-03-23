@@ -26,15 +26,54 @@ static int findname(struct addressbook*p)
 
 void inittotal(struct addressbook* p)
 {
+	
 	p->sz = 0;
-	memset(p->total, 0, sizeof(p->total));
+	p->capacity = 3;
+	struct peoinfo* ptr1 = (struct peoinfo*)malloc(3*sizeof(struct peoinfo));
+	if (ptr1 == NULL)
+	{
+		printf("初始化失败\n");
+		return;
+	}
+	p->total = ptr1;
+	FILE* ptr = fopen("date.dat", "r");
+	int ret = 0;
+	while (1)
+	{
+		if (p->sz == p->capacity)
+		{
+			p->capacity = p->capacity + 2;
+			struct peoinfo* ptr = realloc(p->total, p->capacity * sizeof(struct peoinfo));
+			if (ptr == NULL)
+			{
+				printf("初始化失败:没有多余的内存.\n");
+				return;
+			}
+			p->total = ptr;
+		}
+		ret = fread(p->total + p->sz, sizeof(struct peoinfo), 1, ptr);
+		if (ret <= 0)
+		{
+			break;
+		}
+		p->sz++;
+	}
+	//memset(p->total, 0, sizeof(p->total));
 }
 
 void Add(struct addressbook* p)
 {
-	if (p->sz == MAXPE)
+	if (p->sz == p->capacity)
 	{
-		return;
+		p->capacity= p->capacity +2;
+		struct peoinfo* ptr = realloc(p->total,p->capacity*sizeof(struct peoinfo));
+		if (ptr == NULL)
+		{
+			printf("增容量失败\n");
+			return;
+		}
+		p->total = ptr;
+		printf("增容成功\n");
 	}
 	int count = p->sz;
 	printf("请输入名字:\n");
@@ -125,5 +164,22 @@ void Modify(struct addressbook*p)
 	printf("修改成功\n");
 	printf("%-20s %-5s %-5s %-20s %-30s\n", "姓名", "年龄", "性别", "电话", "地址");
 	printf("%-20s %-5d %-5s %-20s %-30s\n", p->total[ret].name, p->total[ret].age, p->total[ret].sex, p->total[ret].tele, p->total[ret].address);
+	return;
+}
+
+void savecommunicate(struct addressbook*p)
+{
+	int i = 0;
+	FILE* ptr=fopen("date.dat","w");
+	if (ptr == NULL)
+	{
+		printf("出现错误:保存失败.\n");
+	}
+	for (i = 0; i < p->sz;i++)
+	{
+		fwrite(p->total + i,sizeof(struct peoinfo),1,ptr);
+	}
+	printf("保存成功:保持在date.dat文件中\n");
+	fclose(ptr);
 	return;
 }

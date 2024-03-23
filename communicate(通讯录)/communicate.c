@@ -52,7 +52,11 @@ int main()
 			print12(&a);
 			break;
 		case exit1:
+			savecommunicate(&a);
 			return;
+			break;
+		default:
+			printf("请输入有效数字\n");
 			break;
 		}
 
